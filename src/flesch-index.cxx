@@ -30,7 +30,7 @@ void fi::Flesch_Index::Read() {
     if(ifs) {
         char c;
         std::string word = "";
-        std::string sentence = "";
+        std::vector<std::string> sentence;
         int p_count = 0;
         while(ifs.get(c)) {
             switch(c) {
@@ -38,23 +38,25 @@ void fi::Flesch_Index::Read() {
                 case '?':
                 case '!':
                     if(!word.empty()) {
-                        if(!sentence.empty() && sentence.back() != ' ') {
-                            sentence += ' ';
+                        word = this->to_lower(this->strip(word));
+                        if(!word.empty()) {
+                            sentence.push_back(word);
                         }
-                        sentence += this->to_lower(this->strip(word));
-                        word = "";
                     }
                     if(!sentence.empty()) {
                         this->sentences.push_back(sentence);
-                        sentence = "";
                     }
+                    word = "";
+                    sentence.clear();
                     break;
                 case '\n':
                 case ' ':
-                    if(!sentence.empty() && sentence.back() != ' ') {
-                        sentence += ' ';
+                    if(!word.empty()) {
+                        word = this->to_lower(this->strip(word));
+                        if(!word.empty()) {
+                            sentence.push_back(word);
+                        }
                     }
-                    sentence += this->to_lower(this->strip(word));
                     word = "";
                     break;
                 default:
@@ -64,11 +66,20 @@ void fi::Flesch_Index::Read() {
         }
     }
 }
+bool fi::Flesch_Index::is_vowel(char c) {
+    char vowels[] = {'a', 'e', 'i', 'u'};
+    for(auto vowel : vowels) {
+        if(c == vowel) {
+            return true;
+        }
+    }
+    return false;
+}
 
 void fi::Flesch_Index::Analyze() {
-    this->syllable_count();
-    this->word_count();
     this->sentence_count();
+    this->word_count();
+    this->syllable_count();
 
     this->_fi = 206.835 - (84.6 * (double)(this->Syllables() /
                 (double)this->Words())) - (1.015 * (double)(this->Words() /
@@ -76,71 +87,42 @@ void fi::Flesch_Index::Analyze() {
 }
 
 void fi::Flesch_Index::syllable_count() {
-    char vowels[] = {'a', 'e', 'i', 'u'};
-
     unsigned int syllables = 0;
-    std::string delimiter = " ";
-
     for(auto sentence : this->sentences) {
-        size_t pos = 0;
-        std::string token;
-        while((pos = sentence.find(delimiter)) != std::string::npos) {
-            syllables++;
-            token = sentence.substr(0, pos);
-
-            //TODO: Find syllables
-            int count = 0;
-            for(auto c : token) {
-                bool constant = 0;
-                bool vowelFound = false;
-
-                for(auto vowel : vowels) {
-                    if(c == vowel) {
-                        if(count == (token.size() - 1)) {
-                            if(vowel == 'e') {
-                                break;
-                            }
-                        }
-                        vowelFound = true;
-                        if(count == 0) {
-                            syllables++;
-                            break;
-                        }
-                        if(constant) {
-                            syllables++;
-                        }
+        for(auto word : sentence) {
+            int temp_syllables = 0;
+            for(auto z = 0; z < word.size(); z++) {
+                if(this->is_vowel(word[z])) {
+                    if(z == (word.size() - 1) && word[z] == 'e') {
                         break;
                     }
+                    if(z == 0) {
+                        temp_syllables++;
+                        break;
+                    }
+                    if(!this->is_vowel(word[z - 1])) {
+                        temp_syllables++;
+                    }
                 }
-
-                if(!vowelFound) {
-                    constant = true;
-                }else{
-                    constant = false;
-                }
-                vowelFound = false;
-                count++;
             }
-
-            sentence.erase(0, pos + delimiter.length());
+            if(temp_syllables == 0) {
+                syllables++;
+            }else{
+                syllables += temp_syllables;
+            }
         }
     }
 
     this->_syllable_count = syllables;
 }
+
 void fi::Flesch_Index::word_count() {
     unsigned int words = 0;
-    std::string delimiter = " ";
 
     for(auto sentence : this->sentences) {
-        size_t pos = 0;
-        std::string token;
-        while((pos = sentence.find(delimiter)) != std::string::npos) {
-            token = sentence.substr(0, pos);
-            words++;
-            sentence.erase(0, pos + delimiter.length());
-        }
+        words += sentence.size();
     }
+
     this->_word_count = words;
 }
 void fi::Flesch_Index::sentence_count() {
@@ -178,7 +160,17 @@ std::string fi::Flesch_Index::strip(const std::string &s) {
 
     return result;
 }
+/**
+ * Strips a string of all characters that are not a member of alphanumeric
+ */
+std::string fi::Flesch_Index::pattern(const std::string &s) {
+    std::string result;
+    for(auto c : s) {
+        result += this->is_vowel(c) ? 'v' : 'c';
+    }
 
+    return result;
+}
 /**
  * Turns entire string into a lowercase version.
  */
