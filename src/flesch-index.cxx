@@ -20,6 +20,10 @@ void fi::Flesch_Index::Read() {
     struct stat filestatus;
     stat(filename.c_str(), &filestatus );
     unsigned int filesize = filestatus.st_size;
+    if(!this->file_exists(this->filename)) {
+        std::cerr << "File Not Found" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
     std::ifstream ifs(this->filename.c_str());
 
@@ -59,6 +63,97 @@ void fi::Flesch_Index::Read() {
             }
         }
     }
+}
+
+void fi::Flesch_Index::Analyze() {
+    this->syllable_count();
+    this->word_count();
+    this->sentence_count();
+
+    this->_fi = 206.835 - (84.6 * (double)(this->Syllables() /
+                (double)this->Words())) - (1.015 * (double)(this->Words() /
+                (double)this->Sentences()));
+}
+
+void fi::Flesch_Index::syllable_count() {
+    char vowels[] = {'a', 'e', 'i', 'u'};
+
+    unsigned int syllables = 0;
+    std::string delimiter = " ";
+
+    for(auto sentence : this->sentences) {
+        size_t pos = 0;
+        std::string token;
+        while((pos = sentence.find(delimiter)) != std::string::npos) {
+            syllables++;
+            token = sentence.substr(0, pos);
+
+            //TODO: Find syllables
+            int count = 0;
+            for(auto c : token) {
+                bool constant = 0;
+                bool vowelFound = false;
+
+                for(auto vowel : vowels) {
+                    if(c == vowel) {
+                        if(count == (token.size() - 1)) {
+                            if(vowel == 'e') {
+                                break;
+                            }
+                        }
+                        vowelFound = true;
+                        if(count == 0) {
+                            syllables++;
+                            break;
+                        }
+                        if(constant) {
+                            syllables++;
+                        }
+                        break;
+                    }
+                }
+
+                if(!vowelFound) {
+                    constant = true;
+                }else{
+                    constant = false;
+                }
+                vowelFound = false;
+                count++;
+            }
+
+            sentence.erase(0, pos + delimiter.length());
+        }
+    }
+
+    this->_syllable_count = syllables;
+}
+void fi::Flesch_Index::word_count() {
+    unsigned int words = 0;
+    std::string delimiter = " ";
+
+    for(auto sentence : this->sentences) {
+        size_t pos = 0;
+        std::string token;
+        while((pos = sentence.find(delimiter)) != std::string::npos) {
+            token = sentence.substr(0, pos);
+            words++;
+            sentence.erase(0, pos + delimiter.length());
+        }
+    }
+    this->_word_count = words;
+}
+void fi::Flesch_Index::sentence_count() {
+    unsigned int sentences = 0;
+    sentences = (unsigned int)this->sentences.size();
+    this->_sentence_count = sentences;
+}
+
+void fi::Flesch_Index::Print() {
+    std::cout << "Syllables:\t" << this->Syllables() << std::endl;
+    std::cout << "Words:\t\t" << this->Words() << std::endl;
+    std::cout << "Sentences:\t" << this->Sentences() << std::endl;
+    std::cout << "FI:\t\t" << this->FI() << std::endl;
 }
 
 /**
