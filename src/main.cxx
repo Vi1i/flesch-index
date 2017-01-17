@@ -19,5 +19,7 @@ int main (int argc, char *argv[]) {
 
     fi::Flesch_Index fi = fi::Flesch_Index(filename);
     fi.Read();
+    fi.Analyze();
+    fi.Print();
     exit(EXIT_SUCCESS);
 }
