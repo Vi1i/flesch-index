@@ -16,6 +16,7 @@ namespace fi {
         unsigned int Words() const { return _word_count; }
         unsigned int Sentences() const { return _sentence_count; }
         double FI() const { return _fi; }
+        double FK() const { return _fk; }
 
     private:
         std::string filename;
@@ -24,6 +25,7 @@ namespace fi {
         unsigned int _word_count;
         unsigned int _sentence_count;
         double _fi;
+        double _fk;
 
         void Init();
         bool file_exists(const std::string& name);

@@ -84,6 +84,9 @@ void fi::Flesch_Index::Analyze() {
     this->_fi = 206.835 - (84.6 * (double)(this->Syllables() /
                 (double)this->Words())) - (1.015 * (double)(this->Words() /
                 (double)this->Sentences()));
+    this->_fk = 15.59 - (11.8 * (double)(this->Syllables() /
+                (double)this->Words())) + (0.39 * (double)(this->Words() /
+                (double)this->Sentences()));
 }
 
 void fi::Flesch_Index::syllable_count() {
@@ -136,6 +139,7 @@ void fi::Flesch_Index::Print() {
     std::cout << "Words:\t\t" << this->Words() << std::endl;
     std::cout << "Sentences:\t" << this->Sentences() << std::endl;
     std::cout << "FI:\t\t" << this->FI() << std::endl;
+    std::cout << "FK:\t\t" << this->FK() << std::endl;
 }
 
 /**
