@@ -38,6 +38,7 @@ From the comparisons with MTR, I can definitely say that I got something differe
 I also didn't realize that I can get the statistical break down of sentences, words, and syllables until I already used all of my queries.
 If I would have it would have allowed me to see better where we differed.
 I used Flesch reading-was test and Flesch–Kincaid grade level to calculate the reading levels.  The second one so that I could compare to the MTR results.
+
 1. ![Flesch reading-ease test](fi-eq.png)
 
 2. ![Flesch–Kincaid grade level](fk-eq.png)
