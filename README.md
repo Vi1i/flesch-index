@@ -25,6 +25,7 @@ make
 bin/flesch-index ../data/GettysburgAddress.txt
 ```
 Line number:
+
 1. Moves into the root of the repo so that other command can be relative.
 2. This sets up and out of program build for the next lines.
   * This allows the build file generated to not funk up the repo.
