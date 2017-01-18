@@ -19,9 +19,11 @@ Functionaly, this creates a the object `Flesch_Index`, with the *filename* to re
 `Analyze` calls the methods that break the *words* into *syllables* using two rules.
 
 A sentence was broken down with this rule:
+
 1. A sentence ends if characters *?*, *!*, and *.* were found.
 
 A word was broken down with these rules:
+
 1. A word ends if whitespace is found.
 2. Strip the word of all non-alphanumeric.
 3. Lowercase the entire word.
@@ -30,6 +32,7 @@ Note: An em dash, '—', could separate a word, but this application will count 
 This is the issue talked about with encoding above.
 
 A vowel was broken down with these rules:
+
 1. A vowel at the start of a word or
 2. A vowel following a consonant in a word
   * One exception to Rule 2: A lone *e* at the end of a word does not count as a syllable.
@@ -38,6 +41,7 @@ From the comparisons with MTR, I can definitely say that I got something differe
 I also didn't realize that I can get the statistical break down of sentences, words, and syllables until I already used all of my queries.
 If I would have it would have allowed me to see better where we differed.
 I used Flesch reading-was test and Flesch–Kincaid grade level to calculate the reading levels.  The second one so that I could compare to the MTR results.
+
 1. ![Flesch reading-ease test](fi-eq.png)
 
 2. ![Flesch–Kincaid grade level](fk-eq.png)

@@ -10,7 +10,7 @@ Earlier on I said this application used simple measures in the Flesch Index calc
 
 As an native English speaker, these reasons seem very base, except the more I personally looked into them, the more I realized the difficulty of a machine knowing phonemes, sentence break downs, and even words from a sentence.
 
-### Requirements:
+## Requirements:
 * CMake >= 3.1
 * C++11
 
@@ -31,3 +31,6 @@ Line number:
 3. Calls the `cmake` to on `../CMakeLists.txt` to generate build files.
 4. This starts the compile on the generated build structure
 5. This is an example use of the application with a sample data.
+
+
+## [Results](results/RESULTS.md)
